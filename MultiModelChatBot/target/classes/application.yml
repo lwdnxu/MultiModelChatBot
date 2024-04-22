@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  jackson:
+#     如果字段为null，则不序列化
+    default-property-inclusion: non_null
+  web:
+    resources:
+      static-locations: classpath:/templates/,classpath:/static/
+
+multi_model:
+  llm:
+#    openai:
+    api_key: sk-
+    model_name: gpt-3.5-turbo
+    url: https://api.openai.com/v1/chat/completions
+#    llama:
+#      url: 127.0.0.1
+#    chatglm:
+#      url: http://localhost:8000/v1/chat/completions
+#      model: chatglm2-6b
+  text2image:
+    url: http://127.0.0.1:7860/sdapi/v1/txt2img
+  text2video:
+    url: 111
+  image2video:
+    url: http://127.0.0.1:4396/image_to_video
+  video_enhance:
+    url: http://127.0.0.1:2000/video_to_video
+  image2text:
+    url: http://127.0.0.1:7860
+  text2voice:
+    url: http://127.0.0.1:5678/text2voice
+  voice2text:
+    url: http://127.0.0.1:5000/voice2text
+    upload_url: http://127.0.0.1:5000/upload

@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="MultiModelChatBot" />
+    <title>聊天</title>
+    <link
+      rel="stylesheet"
+      href="static/css/material-design-iconic-font.min.css"
+    />
+    <link rel="stylesheet" href="static/css/style.min.css" />
+    <link rel="stylesheet" href="static/css/editormd.min.css" />
+    <link rel="stylesheet" href="static/css/zq_preloader.css" />
+    <link rel="stylesheet" href="static/css/sweetalert.css" />
+    <link rel="stylesheet" href="static/css/simple-bar.css" />
+    <link rel="stylesheet" href="static/css/jBox.all.min.css" />
+    <link rel="stylesheet" href="static/css/pop.css" />
+    <link href="static/css/icon.css" rel="stylesheet" />
+  </head>
+  <style>
+    a {
+      color: var(--primary-color);
+    }
+    a:hover {
+      color: var(--dark-color);
+    }
+    .modal-right.show .modal-dialog {
+      transform: translate(0, 0) !important;
+    }
+
+    .modal.show .modal-dialog {
+      transform: none;
+    }
+
+    .modal.fade .modal-dialog {
+      transition: transform 0.3s ease-out;
+      transform: translate(0, -50px);
+    }
+
+    .modal-right .modal-dialog {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 360px;
+      max-width: 100%;
+      margin: 0;
+      transform: translate(100%, 0) !important;
+      transition: 0.5s;
+    }
+
+    .modal-right .modal-content {
+      height: 100%;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: column;
+      border-radius: 0;
+    }
+
+    .text-chat {
+      white-space: pre-wrap;
+      /*white-space: normal;*/
+    }
+
+    .code-box {
+      margin-top: 5px;
+      margin-bottom: 5px;
+      padding: 5px;
+      background: #fff;
+      border-radius: 6px;
+      color: #444;
+      line-height: 1.5;
+      max-height: 350px;
+      position: relative;
+      height: auto;
+      background-color: #fff;
+      border: solid 1px #f5f5f5;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.075);
+    }
+
+    .code-box code {
+      color: #555;
+    }
+
+    .code-box textarea {
+      padding: 0;
+      resize: none;
+      width: 100%;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 22px;
+      right: 12px;
+      border: 1px solid #eee;
+      background: rgba(154, 154, 255, 0.1);
+      border-radius: 5px;
+      font-size: 12px;
+      padding: 7px 16px;
+      transition: all 0.4s ease;
+      font-family: "Inter", sans-serif;
+    }
+
+    .copy-btn:focus-within,
+    .copy-btn:hover {
+      background: #61b864;
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .center-modal {
+      transform: scale(0);
+      transition: 0.4s;
+    }
+
+    .center-modal.show {
+      transform: scale(1);
+    }
+
+    .center-modal .modal-dialog {
+      margin: 0;
+      width: 100%;
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform: translate(-50%, 50%) !important;
+    }
+
+    .modal-fill {
+      background: rgba(255, 255, 255, 0.97);
+      transform: scale(0, 0);
+      transition: 0.4s;
+    }
+    .modal.modal-fill {
+      background: var(--card-color);
+    }
+    .modal-fill.show {
+      display: flex !important;
+      justify-content: center;
+      flex-flow: column nowrap;
+      transform: scale(1, 1);
+      transition: 0.4s;
+    }
+
+    /*增补样式，代码样式，夜间模式样式*/
+    .modal-body {
+      background: var(--card-color);
+    }
+    .modal-header {
+      background: var(--card-color);
+      /*border-bottom: var(--border-color);*/
+    }
+    .qaq {
+      background: var(--card-color);
+    }
+    .hljs {
+      display: block;
+      overflow-x: auto;
+      padding: 0.5em;
+      background: #1e1e1e !important;
+      color: #dcdcdc;
+    }
+    .editormd-html-preview pre.prettyprint,
+    .editormd-preview-container pre.prettyprint {
+      border: 1px solid var(--border-color);
+    }
+    .editormd-html-preview pre,
+    .editormd-preview-container pre {
+      border: 1px solid #ddd;
+      background: var(--card-color);
+    }
+    li.L1,
+    li.L3,
+    li.L5,
+    li.L7,
+    li.L9 {
+      background: var(--card-color);
+    }
+    pre code {
+      font-size: inherit;
+      color: inherit;
+      word-break: normal;
+    }
+    .kwd {
+      color: #569cd6;
+    }
+    .tag {
+      color: #9b9b9b;
+    }
+    .typ,
+    .atn {
+      color: #569cd6;
+    }
+    .clo,
+    .opn,
+    .pun {
+      color: var(--dark-color);
+    }
+    .str {
+      color: #d69d85;
+    }
+    .pln {
+      color: #666666;
+    }
+    .com {
+      color: #57a64a;
+      font-style: italic;
+    }
+    .hljs li.L1,
+    .hljs li.L3,
+    .hljs li.L5,
+    .hljs li.L7,
+    .hljs li.L9 {
+      background: #212121;
+    }
+
+    .hljs .kwd {
+      color: #569cd6;
+    }
+    .hljs .tag {
+      color: #9b9b9b;
+    }
+    .hljs .typ,
+    .hljs .atn {
+      color: #569cd6;
+    }
+    .hljs .clo,
+    .hljs .opn,
+    .hljs .pun {
+      color: #dcdcdc;
+    }
+    .hljs .str {
+      color: #d69d85;
+    }
+    .hljs .pln {
+      color: #dcdcdc;
+    }
+    .hljs .com {
+      color: #57a64a;
+      font-style: italic;
+    }
+
+    .code_change {
+      left: 5px;
+      top: 5px;
+      display: block;
+      width: 90px;
+      height: 28px;
+      color: var(--font-555);
+      border: 1px solid var(--dark-color);
+      background: rgba(154, 154, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      font-family: "Inter", sans-serif;
+    }
+    .copy-code-btn {
+      float: right;
+      right: 5px;
+      top: 5px;
+      display: block;
+      width: 90px;
+      height: 28px;
+      border: 1px solid var(--dark-color);
+      color: var(--font-555);
+      background: rgba(154, 154, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      font-family: "Inter", sans-serif;
+    }
+    .hljs .code_change {
+      color: #eee;
+    }
+    .hljs .copy-code-btn {
+      color: #eee;
+    }
+    .alert-danger {
+      color: #842029 !important;
+      background-color: #f8d7da !important;
+      border-color: #f5c2c7 !important;
+    }
+    .markdown-body table {
+      display: table-row !important;
+    }
+  </style>
+  <body>
+    <!-- <div class="zq_preloader zq_preloader_center">
+    <span>H</span><span>O</span><span>P</span><span>P</span><span>I</span><span>N</span><span>Z</span><span>Q</span>
+</div> -->
+    <div id="layout" class="theme-cyan">
+      <div class="main px-xl-5 px-lg-4 px-3">
+        <div class="chat-body">
+          <div class="chat-header border-bottom py-xl-4 py-md-3 py-2">
+            <div class="container-xxl">
+              <div class="row align-items-center">
+                <div class="col-6 col-xl-4">
+                  <div class="media">
+                    <div
+                      class="avatar me-3 show-user-detail"
+                      data-toggle="tooltip"
+                      title=""
+                      data-original-title="MultiModelChatBot"
+                    >
+                      <div
+                        class="avatar rounded-circle no-image bg-primary text-light"
+                      >
+                        <span><i class="zmdi zmdi-comment-text"></i></span>
+                      </div>
+                    </div>
+                    <div class="media-body overflow-hidden">
+                      <div class="d-flex align-items-center mb-1">
+                        <h6 class="text-truncate mb-0 me-auto">MultiModelChatBot</h6>
+                      </div>
+                      <div class="text-truncate"><a target="_blank" href="https://github.com/lwdnxu/MultiModelChatBot">项目地址</a></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 col-xl-8 text-end">
+                  <ul class="nav justify-content-end"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="collapse" id="chat-search-div">
+            <div class="container-xxl py-2">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control chat-message-search"
+                  placeholder="搜索当前聊天内容"
+                />
+                <div class="input-group-append">
+                  <span class="input-group-text text-muted">0 / 0</span>
+                </div>
+                <div class="input-group-append">
+                  <button
+                    type="button"
+                    class="btn btn-success chat-message-search-btn"
+                  >
+                    搜索
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-content" id="chat-content">
+            <div class="container-xxl">
+              <ul
+                class="list-unstyled py-4 chat-message"
+                id="chat-message"
+              ></ul>
+            </div>
+          </div>
+          <div class="chat-footer border-top py-xl-4 py-lg-2 py-2">
+            <div class="container-xxl">
+              <div class="row">
+                <div
+                  class="col-12"
+                  style="border: 1px solid black; border-radius: 10px"
+                >
+                  <div class="input-group align-items-center">
+                    <input
+                      type="text"
+                      class="form-control border-0 pl-0"
+                      id="sendText"
+                      placeholder="输入内容..."
+                    />
+                    <div class="input-group-append d-none d-sm-block">
+                      <span class="input-group-text border-0">
+                        <button
+                          class="btn btn-sm btn-link text-muted upload_file"
+                          data-toggle="tooltip"
+                          title="上传文件"
+                          type="button"
+                        >
+                          <!-- <i class="zmdi zmdi-refresh font-22"></i> -->
+                          <span class="material-icons">folder</span>
+                        </button>
+                      </span>
+                      <!-- <span class="material-icons">face</span> -->
+                    </div>
+                    <div class="input-group-append">
+                      <span class="input-group-text border-0 app">
+                        <button
+                          class="btn btn-sm btn-link text-muted record-btn"
+                          data-toggle="tooltip"
+                          title=""
+                          type="button"
+                          data-original-title="开始录音"
+                        >
+                          <span class="material-icons">mic</span>
+                        </button>
+                        <!-- <audio controls class="audio-player"></audio> -->
+                      </span>
+                    </div>
+                    <div class="input-group-append">
+                      <span class="input-group-text border-0 pr-0">
+                        <button
+                          type="btn"
+                          id="sendChat"
+                          class="btn btn-primary"
+                        >
+                          <span class="d-none d-md-inline-block me-2">发送</span
+                          ><i class="zmdi zmdi-mail-send"></i>
+                        </button>
+                        <button
+                          type="btn"
+                          id="stopChat"
+                          style="display: none"
+                          class="btn btn-primary"
+                        >
+                          <span class="d-none d-md-inline-block me-2">结束</span
+                          ><i class="zmdi zmdi-stop"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="modal center-modal fade"
+        id="modal-chatContent"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">上下文设置</h5>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">演示期间总是允许携带上下文</div>
+              <small class="form-text text-muted"
+                >由于gpt-3.5-turbo有token的限制，所以我将只携带3个上下文。</small
+              >
+              <div class="mt-5">
+                <button type="button" class="btn btn-link" data-dismiss="modal">
+                  关闭
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+    <script src="static/js/jquery-3.3.1.min.js"></script>
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/template.js"></script>
+    <script src="static/js/marked.min.js"></script>
+    <script src="static/js/prettify.min.js"></script>
+    <script src="static/js/raphael.min.js"></script>
+    <script src="static/js/underscore.min.js"></script>
+    <script src="static/js/sequence-diagram.min.js"></script>
+    <script src="static/js/flowchart.min.js"></script>
+    <script src="static/js/jquery.flowchart.min.js"></script>
+    <script src="static/js/editormd.js"></script>
+    <script src="static/js/zq.js"></script>
+    <script src="static/js/sweetalert.min.js"></script>
+    <script src="static/js/jquery.sweet-alert.custom.js"></script>
+    <script src="static/js/simple-bar.js"></script>
+    <script src="static/js/jBox.all.min.js"></script>
+    <script src="static/js/html2canvas.js"></script>
+    <script>
+      MESSAGES=[]
+        
+
+
+      var ip = "http://43.163.202.187:8094";
+      var IP = "http://127.0.0.1:8080"
+      var webMetaData = {
+        zq: __zqChat, //zq元数据，提供公用方法和浏览器环境信息（如：是否移动端，是否在联网环境等）
+        userId: null, //浏览器独一无二的标识，模拟用户登录后的id，永久存放于缓存中
+        apikey: null,
+        modal: "gpt-3.5-turbo", //全局模型，其他模型在帮助中查看
+        timeout: 7500,
+        ws: null, //websocket对象，项目启动后会马上连接，注意：每次重连的时候ws会有2s被置为null，请妥善处理
+        sse: null, //sse对象，仅在使用时连接，error事件和complete事件都放在error中处理了，请知悉
+        chatState: 0, //0表示关闭，即没有在聊天，处于空闲状态。1表示等待中，这时候后台已经接收到请求，但还没有返回数据。2表示正在聊天中，后台通过sse实时返回聊天对话。
+        index: 1, //当前聊天索引
+        userno: null, //不同于userId，userno为websocket标志的当前浏览器的标识，每次重启都会改变
+        isContent: true, //是否携带上下文
+        cache: {}, //缓存
+        accessToken: null, //openai登录需要的凭证，通过该token，无需用户名密码即可伪造登录openai，并获取账号元数据
+        chat: [], //聊天内容
+        chatCurrentId: null, //当前聊天id
+        accessTokenJWT: {
+          //解析后的token
+          header: null,
+          payload: null,
+          signature: null,
+        },
+      };
+
+      $(function () {
+        apikey();
+        // webMetaData.userno = __zqChat.uuid(32, 64);
+        // webMetaData.userId = localStorage.getItem("userId");
+        // getUUID()
+        if (webMetaData.userId == null) {
+          webMetaData.userId = __zqChat.uuid(32, 64);
+          localStorage.setItem("userId", webMetaData.userId);
+        }
+        $("#user_id").text("欢迎您,游客:" + webMetaData.userId);
+        init();
+        bind();
+        connect("sse");
+        setTimeout(function () {
+          $("#modal-settings .modal-dialog").width($(".main").width());
+          $("#modal-image .modal-dialog").width($(".main").width());
+        }, 1000);
+        setInterval(function () {
+          //$("#modal-image .modal-dialog").height(0).height($(".modal-image-body").height()+60);
+          $("#modal-image .modal-dialog")
+            .height(0)
+            .height($(".modal-image-body").height() + 60);
+          $("#modal-settings .modal-dialog")
+            .height(0)
+            .height($(".modal-settings-body").height() + 30);
+        }, 20);
+        // if(localStorage.getItem("log1")==null){
+        //     $("#modal-log").modal();
+        // }
+        console.log(webMetaData);
+        // account();
+        // require(["orion/editor/edit"], function (edit) {
+        //     edit({className: "code-editor"});
+        // });
+      });
+
+      $(".upload_file").on("click", function () {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".doc, .docx, .mp4, .wav, .txt, .png, .jpg, .jpeg";
+        input.onchange = function (event) {
+          const file = event.target.files[0];
+          uploadFile(file);
+        };
+        input.click();
+      });
+
+      function apikey() {
+        if (localStorage.getItem("apikey") != null) {
+          webMetaData.apikey = localStorage.getItem("apikey");
+        }
+        $.ajaxSetup({
+          headers: {
+            apikey: webMetaData.apikey,
+          },
+        });
+        $("#apikey").val(webMetaData.apikey);
+      }
+
+      function saveApiKey() {
+        localStorage.setItem("apikey", $("#apikey").val());
+        location.reload();
+      }
+
+      function clearApiKey() {
+        localStorage.removeItem("apikey");
+        location.reload();
+      }
+
+      function createChat() {
+        $(".chat-message").html("");
+        let chatId = __zqChat.uuid(32, 62);
+        let nowTime = __zqChat.getRealDate(new Date());
+        $(".chat-title").removeClass("active");
+        $(".chat-all-header").after2(
+          `<li class="online chat-title active new" data-id="${chatId}">
+                        <div class="hover_action">
+                            <button type="button" data-toggle="tooltip" onclick="openChat('${chatId}')" data-original-title="标记为公开" class="btn btn-link text-info"><i class="zmdi zmdi-eye"></i></button>
+                            <button type="button" class="btn btn-link text-warning" data-title="新建聊天" data-answer="点击我来跟chatgpt聊天吧" onclick="editChat('${chatId}')" data-original-title="修改聊天"><i class="zmdi zmdi-edit"></i>
+                            </button>
+                            <button type="button" data-toggle="tooltip" onclick="removeChat('${chatId}')" data-original-title="移除聊天" class="btn btn-link text-danger"><i class="zmdi zmdi-delete"></i>
+                            </button>
+                        </div>
+                        <a href="#" class="card">
+                            <div class="card-body">
+                                <div class="media">
+                                    <div class="avatar me-3">
+                                        <div class="avatar rounded-circle no-image bg-primary text-light">
+                                            <span><i class="zmdi zmdi-comment-text"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="media-body overflow-hidden">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <h6 class="text-truncate mb-0 me-auto chat-question-header" >新建聊天</h6>
+                                            <p class="small text-muted text-nowrap ms-4 mb-0">${nowTime}</p>
+                                        </div>
+                                        <div class="text-truncate chat-answer-header">
+                                            点击我来跟chatgpt聊天吧
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>`,
+          function () {
+            // setHelp();
+            $(".chat-title")
+              .off("click")
+              .on("click", function () {
+                //移动端切换聊天自动关闭
+                if (__zqChat.isMobile) {
+                  $(".sidebar-toggle-btn").click();
+                  $(".nav-link-mobile").on("click", function () {
+                    $(".sidebar-toggle-btn").click();
+                  });
+                }
+                webMetaData.index = 1;
+                if (webMetaData.chatState > 0) {
+                  stopChat();
+                }
+                $(".chat-message").html("");
+                $(this).addClass("active").siblings().removeClass("active");
+                let chatId = $(this).data("id");
+                webMetaData.chatCurrentId = chatId;
+                $.each(webMetaData.chat, function (i, cc) {
+                  if (cc.chat_id == chatId) {
+                    webMetaData.index += cc.chatMessageList.length / 2;
+                    $.each(cc.chatMessageList, function (index, chatMsg) {
+                      let chatIndex = index + 1;
+                      if (chatMsg.message_role == "user") {
+                        buildMessage(
+                          0,
+                          "user-chat-question-" + chatMsg.message_index,
+                          chatMsg.message_createDate,
+                          chatMsg.message_user_name,
+                          chatMsg.message_user_image,
+                          chatMsg.message,
+                          chatIndex,
+                          false,
+                          chatMsg.message_id
+                        );
+                      }
+                      if (chatMsg.message_role == "assistant") {
+                        buildMessage(
+                          1,
+                          "user-chat-answer-" + chatMsg.message_index,
+                          chatMsg.message_createDate,
+                          chatMsg.message_user_name,
+                          chatMsg.message_user_image,
+                          chatMsg.message,
+                          chatIndex,
+                          false,
+                          chatMsg.message_id
+                        );
+                      }
+                      markdownToHtml(
+                        "message-user-chat-answer-" + chatMsg.message_index
+                      );
+                    });
+                  }
+                });
+                let scrollableDiv = document.getElementById("chat-content");
+                scrollableDiv.scrollTop = 0;
+              });
+          }
+        );
+        webMetaData.chatCurrentId = chatId;
+        webMetaData.chat.push({
+          chat_id: chatId,
+          chat_user_id: webMetaData.userId,
+          chat_createDate: nowTime,
+          chat_title: "新建聊天",
+          chat_answer: "点击我来跟chatgpt聊天吧",
+          chat_state: 0, //0表示不公开，1表示公开
+          chatMessageList: [],
+          chat_modal: webMetaData.modal,
+          chat_context: 6,
+          chat_system: "",
+        });
+      }
+
+      /**
+       * 根据chatID查找chat
+       * */
+      function findChatByChatid(chatId) {
+        let temp = null;
+        $.each(webMetaData.chat, function (i, chat) {
+          if (chat.chat_id == chatId) {
+            temp = chat;
+            return;
+          }
+        });
+        return temp;
+      }
+
+      /**
+       * 获取当前聊天
+       * */
+      function getCurrentChat() {
+        return findChatByChatid(webMetaData.chatCurrentId);
+      }
+
+      /**
+       * 移除聊天
+       * */
+    
+      /**
+       * 公开聊天
+       * */
+    
+
+      /**
+       * 编辑聊天
+       * */
+    
+
+      function loadChatMessage() {}
+
+      function loadChat() {
+        if (webMetaData.chat.length == 0) {
+          createChat();
+        } else {
+          $.each(webMetaData.chat, function (index, chat) {
+            $(
+              ".chat-all-header"
+            ).after(`<li class="online chat-title" data-id="${chat.chat_id}">
+                        <div class="hover_action">
+                            <button type="button" data-toggle="tooltip" onclick="openChat('${chat.chat_id}')" data-original-title="标记为公开" class="btn btn-link text-info"><i class="zmdi zmdi-eye"></i></button>
+                            <button type="button" class="btn btn-link text-warning" onclick="editChat('${chat.chat_id}')" data-original-title="修改聊天"><i class="zmdi zmdi-edit"></i>
+                            </button>
+                            <button type="button" data-toggle="tooltip" onclick="removeChat('${chat.chat_id}')" data-original-title="移除聊天" class="btn btn-link text-danger"><i class="zmdi zmdi-delete"></i>
+                            </button>
+                        </div>
+                        <a href="#" class="card">
+                            <div class="card-body">
+                                <div class="media">
+                                    <div class="avatar me-3">
+                                        <div class="avatar rounded-circle no-image bg-primary text-light">
+                                            <span><i class="zmdi zmdi-comment-text"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="media-body overflow-hidden">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <h6 class="text-truncate mb-0 me-auto chat-question-header" >${chat.chat_title}</h6>
+                                            <p class="small text-muted text-nowrap ms-4 mb-0">${chat.chat_createDate}</p>
+                                        </div>
+                                        <div class="text-truncate chat-answer-header">
+                                            ${chat.chat_answer}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>`);
+          });
+          createChat();
+        }
+      }
+
+      function init() {
+        webMetaData.cache.theme = localStorage.getItem("theme");
+        webMetaData.cache.locache =
+          localStorage.getItem("locache") == null
+            ? "1"
+            : localStorage.getItem("locache");
+        webMetaData.cache.isscoll =
+          localStorage.getItem("isscoll") == null
+            ? "1"
+            : localStorage.getItem("isscoll");
+        webMetaData.cache.ishelp =
+          localStorage.getItem("ishelp") == null
+            ? "1"
+            : localStorage.getItem("ishelp");
+        if (webMetaData.cache.locache == "0") {
+          $("#iall-cache").attr("checked", false);
+        }
+        if (webMetaData.cache.isscoll == "0") {
+          $("#iall-scoll").attr("checked", false);
+        }
+        if (webMetaData.cache.ishelp == "0") {
+          $("#iall-help").attr("checked", false);
+        }
+        // initAccessToken();
+        // initChat();
+      }
+
+     
+
+  
+
+    
+
+  
+
+    
+
+      function bind() {
+        if (__zqChat.isMobile) {
+          $(".nav-link-mobile").on("click", function () {
+            if (!$("body").hasClass("open-sidebar-menu")) {
+              $(".sidebar-toggle-btn").click();
+            }
+          });
+        }
+
+        $(".no-show-log").click(function () {
+          localStorage.setItem("log1", "0");
+        });
+        $(".cache-m").click(function () {
+          let cacheKey = $(this).data("cache");
+          $(this).is(":checked") == 1
+            ? localStorage.setItem(cacheKey, "1")
+            : localStorage.setItem(cacheKey, "0");
+          webMetaData.cache[cacheKey] = localStorage.getItem(cacheKey);
+        });
+        $(".default-settings").click(function () {
+          $(".cache-m").each(function (index, element) {
+            if ($(element).is(":checked") == 0) {
+              $(element).click();
+            }
+          });
+        });
+        $(".open-dy-button").click(function () {
+          $(".pop-up-modal").addClass("open-modal");
+        });
+        $(".pop-up-modal .close-modal").click(function () {
+          $(".pop-up-modal").removeClass("open-modal");
+        });
+        let copyButton = document.querySelectorAll(".copy-btn");
+        copyButton.forEach((element) => {
+          element.addEventListener("click", (e) => {
+            $(copyButton).each(function (index, elem) {
+              $(elem).text("复制");
+            });
+            const elem = e.target.parentElement.children[1].innerText;
+            let save = function (e) {
+              e.clipboardData.setData("text/plain", elem);
+              e.preventDefault(); //阻止默认行为
+            };
+            document.addEventListener("copy", save);
+            document.execCommand("copy");
+            $(element).text("复制成功！");
+          });
+        });
+        /**
+         * 监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常
+         */
+        window.onbeforeunload = function () {
+          if (webMetaData.ws != null && webMetaData.ws.readyState === 1) {
+            $.post(
+              ip + "/v1/chat/completions/stopstream/" + webMetaData.userno
+            );
+            webMetaData.ws.close();
+          }
+          if (webMetaData.sse != null) {
+            webMetaData.sse.close();
+          }
+        };
+
+        //监听回车
+        $("#sendText").keydown(function (e) {
+          if (e.keyCode == 13) {
+            question();
+            e.preventDefault();
+          }
+        });
+        $(".chat-message-search").keydown(function (e) {
+          if (e.keyCode == 13) {
+            let search = $(this).val();
+            if (search.trim().length == 0) {
+              swal("错误!", "请输入搜索内容", "error");
+            } else {
+              swal("", "这个功能没什么用，自己去实现", "success");
+            }
+            e.preventDefault();
+          }
+        });
+
+        $(".chat-message-search-btn").click(function () {
+          let search = $(".chat-message-search").val();
+          if (search.trim().length == 0) {
+            swal("错误!", "请输入搜索内容", "error");
+          } else {
+            swal("", "这个功能没什么用，自己去实现", "success");
+          }
+        });
+        $(".chat-search").keydown(function (e) {
+          if (e.keyCode == 13) {
+            let search = $(this).val();
+            if (search.trim().length == 0) {
+              swal("错误!", "请输入搜索内容", "error");
+            } else {
+              swal("", "这个功能没什么用，自己去实现", "success");
+            }
+            e.preventDefault();
+          }
+        });
+
+        $("#sendChat").click(function () {
+          question();
+        });
+
+        /**
+         * 停止对话
+         * */
+        $("#stopChat").click(function () {
+          stopChat();
+        });
+
+        $(".create-new-chat").click(function () {
+          createChat();
+        });
+
+        $(".image-cr-btn").click(function () {
+          let prompt = $("#image-prompt").val();
+          if (prompt.trim().length == 0) {
+            alert("请输入图片描述");
+            return;
+          }
+          createImage(prompt, 1, "256x256");
+        });
+
+        $("#code-check").click(function () {
+          $(this).off("click").text("请稍等...");
+          fixCode();
+        });
+      }
+
+      function getScreenshot() {
+        let dom = document.getElementById("chat-message");
+        // 定义截图参数
+        let options = {
+          scrollY: -window.scrollY, // 向下滚动的距离
+          useCORS: true, // 是否允许跨域访问
+          allowTaint: true, // 是否允许跨域访问时携带cookies等敏感信息
+          backgroundColor: "#ffffff", // 背景色设置为null，保证图片的背景透明
+        };
+        // 使用html2canvas截图
+        html2canvas(dom, options).then(function (canvas) {
+          // 将生成的canvas转成图片
+          let imgData = canvas.toDataURL("image/png");
+          let uuid = __zqChat.uuid(32, 64);
+          $(
+            ".chat-message"
+          ).append(`<li class="d-flex message chat-screenshot" id="chat-image-${uuid}" data-html2canvas-ignore>
+                            <div class="message-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar sm rounded-circle bg-primary d-flex align-items-center justify-content-center">
+                                        <span><i class="zmdi zmdi-comment-text text-light"></i></span>
+                                    </div>
+                                    <div class="mx-10 p-2">
+                                        <a href="#" class="text-dark hover-primary font-weight-bold">MultiModelChatBot</a>
+                                    </div>
+                                </div>
+                                <div class="message-row d-flex align-items-center">
+                                    <div class="message-content p-3">
+                                        我是GPT助手，您的截图生成成功！
+                                        <div class="attachment">
+                                            <div class="media mt-2">
+                                                <div class="avatar me-2">
+                                                    <div class="avatar rounded no-image green">
+                                                        <a download="${webMetaData.chatCurrentId}.png" href="${imgData}"><i class="zmdi zmdi-image"></i></a>
+                                                    </div>
+                                                </div>
+                                                <div class="media-body overflow-hidden">
+                                                    <h6 class="text-truncate mb-0"><a download="${webMetaData.chatCurrentId}.png" href="${imgData}">截图.png</a></h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
+                            </div>
+                        </li> `);
+          let scrollableDiv = document.getElementById("chat-content");
+          scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+        });
+      }
+
+      function checkChatError() {
+        $(".message-bot").each(function (index, element) {
+          let $messc = $(element).find(".message-content");
+          if ($messc.html().trim().length == 0) {
+            $messc.addClass("alert-danger");
+            $messc.html("后台出现了某些错误！");
+          }
+        });
+      }
+
+      function fixCode() {
+        $.ajax({
+          url: ip + "/v1/edits/code",
+          type: "post",
+          data: JSON.stringify({
+            input: $(".code-editor").text(),
+            instruction: "Complete the code based on comments",
+          }),
+          contentType: "application/json",
+          success: function (data) {
+            console.log(data);
+            $(".code-editor").text(data.choices[0].text);
+            // require(["orion/editor/edit"], function (edit) {
+            //     edit({className: "code-editor"});
+            // });
+          },
+          complete: function () {
+            $("#code-check")
+              .off("click")
+              .on("click", function () {
+                $(this).off("click").text("增补/修改");
+                fixCode();
+              });
+          },
+        });
+      }
+
+      function stopChat() {
+        if (webMetaData.ws != null) {
+          $.post(ip + "/v1/chat/completions/stopstream/" + webMetaData.userno);
+        } else {
+          webMetaData.sse.close();
+        }
+        $("#stopChat").hide();
+        $("#sendChat").show();
+
+        // if (webMetaData.chatState == 1) {
+        //     $("#user-chat-answer-" + webMetaData.index).remove();
+        // } else if (webMetaData.chatState == 2) {
+        //     webMetaData.chatState = 0;
+        //     webMetaData.index++;
+        //     $("#stopChat").hide();
+        //     $("#sendChat").show();
+        //     saveChat();
+        // }
+      }
+
+      /**
+       * 连接，sse为sse服务，ws为websocket服务，其中两个服务对话都可以用，但是后续功能（如终止对话等）全部只支持sse
+       * websocket可以当作demo学习或者使用，本项目使用了sse，官网也是。
+       * */
+      function connect(type) {
+        if (type == "sse") {
+        } else {
+          webMetaData.ws = new WebSocket(
+            "ws://103.143.11.157:8094/chatgpt/" + webMetaData.userno
+          );
+          webMetaData.ws.onopen = function () {};
+          webMetaData.ws.onmessage = function (event) {
+            $("#message-user-chat-answer-" + webMetaData.index)
+              .find(".wave")
+              .remove();
+            let msg = event.data;
+            let _msg = JSON.parse(msg);
+            let chat = JSON.parse(_msg.msg);
+            if (chat.choices[0].message.content != undefined) {
+              webMetaData.chatState = 2;
+              $("#message-user-chat-answer-" + webMetaData.index).text(
+                $("#message-user-chat-answer-" + webMetaData.index).text() +
+                  chat.choices[0].message.content
+              );
+            }
+            if (webMetaData.cache.isscoll == "1") {
+              let scrollableDiv = document.getElementById("chat-content");
+              scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+            }
+            if (
+              chat.choices[0].finishReason != undefined &&
+              chat.choices[0].finishReason == "stop"
+            ) {
+              markdownToHtml("message-user-chat-answer-" + webMetaData.index);
+              webMetaData.index++;
+              //结束
+              webMetaData.chatState = 0;
+            }
+          };
+          webMetaData.ws.onclose = function () {
+            // $.post(ip+"/v1/chat/completions/stopstream/" + webMetaData.userno)
+            // setTimeout(function () {
+            //     connect(); // 重新连接
+            // }, 2000);
+          };
+          webMetaData.ws.onerror = function () {};
+        }
+      }
+
+      /**
+       * 提问
+       * */
+      function question() {
+        if (webMetaData.chatState > 0) {
+          new jBox("Notice", {
+            attributes: {
+              y: "bottom",
+            },
+            position: {
+              x: "center",
+              y: "center",
+            },
+            animation: "flip",
+            color: "red",
+            autoClose: 5000,
+            content: "请等待聊天完成",
+            delayOnHover: true,
+            showCountdown: true,
+          });
+          return;
+        }
+        let question = $("#sendText").val();
+        if (question.length == 0) {
+          new jBox("Notice", {
+            attributes: {
+              y: "bottom",
+            },
+            position: {
+              x: "center",
+              y: "center",
+            },
+            animation: "flip",
+            color: "blue",
+            autoClose: 5000,
+            content: "请输入内容",
+            delayOnHover: true,
+            showCountdown: true,
+          });
+          $("#sendText").focus();
+          return;
+        }
+        $("#sendText").val("");
+        buildMessage(
+          0,
+          "user-chat-question-" + webMetaData.index,
+          __zqChat.getRealDate(new Date()),
+          "user",
+          "static/img/user.png",
+          question,
+          webMetaData.index,
+          false
+        );
+
+        answer("user-chat-answer-" + webMetaData.index, question, "sse");
+      }
+
+      /**
+       * 不渲染md，还原原来的聊天格式
+       * */
+      function notUserMd(id) {
+        if (webMetaData.chatState > 0) {
+          new jBox("Notice", {
+            attributes: {
+              y: "bottom",
+            },
+            position: {
+              x: "center",
+              y: "center",
+            },
+            animation: "flip",
+            color: "blue",
+            autoClose: 5000,
+            content: "正在生成聊天中，生成完毕可操作",
+            delayOnHover: true,
+            showCountdown: true,
+          });
+          return;
+        }
+        $("#" + id)
+          .removeClass("markdown-body")
+          .removeClass("editormd-html-preview")
+          .html("")
+          .text($("#" + id).data("predate"));
+      }
+
+      /**
+       * 渲染md
+       * */
+      function userMd(id) {
+        if (webMetaData.chatState > 0) {
+          new jBox("Notice", {
+            attributes: {
+              y: "bottom",
+            },
+            position: {
+              x: "center",
+              y: "center",
+            },
+            animation: "flip",
+            color: "blue",
+            autoClose: 5000,
+            content: "正在生成聊天中，生成完毕可操作",
+            delayOnHover: true,
+            showCountdown: true,
+          });
+          return;
+        }
+        markdownToHtml(id);
+      }
+
+      /**
+       * md转html
+       * */
+      function markdownToHtml(id) {
+        let markdown = $("#" + id).text();
+        $("#" + id)
+          .text("")
+          .data("predate", markdown);
+
+        let testEditormdView = editormd.markdownToHTML(id, {
+          markdown: markdown, //+ "\r\n" + $("#append-test").text(),
+          htmlDecode: true, // 开启 HTML 标签解析，为了安全性，默认不开启
+          //htmlDecode: "style,script,iframe",  // you can filter tags decode
+          //toc             : false,
+          tocm: true, // Using [TOCM]
+          //tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
+          //gfm             : false,
+          //tocDropdown     : true,
+          // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+          emoji: true,
+          taskList: true,
+          tex: true, // 默认不解析
+          flowChart: true, // 默认不解析
+          sequenceDiagram: true, // 默认不解析
+        });
+        $(".message-content pre").each(function (index_code, element_code) {
+          let $element_code = $(element_code);
+          $(element_code).find(".code_change").remove();
+          $(element_code).find(".copy-code-btn").remove();
+          let code = $element_code.text();
+          $element_code.addClass("pre_" + index_code);
+          let $code = $element_code.on({
+            mouseover: function (e1) {
+              e1.stopPropagation();
+            },
+            mouseout: function (e2) {
+              e2.stopPropagation();
+            },
+          });
+          $element_code
+            .prepend(
+              $(
+                `<button class="code_change cursor-pointer" data-html2canvas-ignore>切换主题</button>`
+              )
+                .off("click")
+                .on("click", function () {
+                  $code.toggleClass("hljs");
+                })
+            )
+            .prepend(
+              $(
+                `<button class="copy-code-btn" data-html2canvas-ignore>复制</button>`
+              )
+                .off("click")
+                .on("click", function () {
+                  $(".copy-code-btn").each(function (index, elem) {
+                    $(elem).text("复制");
+                  });
+                  let save = function (e) {
+                    e.clipboardData.setData("text/plain", code);
+                    e.preventDefault(); //阻止默认行为
+                  };
+                  document.addEventListener("copy", save);
+                  document.execCommand("copy");
+                  $(this).text("复制成功！");
+                })
+            );
+        });
+      }
+
+      /**
+       * botType:0用户 / 1 gpt机器人 / 2 :其他
+       **/
+      function buildMessage(
+        botType,
+        id,
+        date,
+        user,
+        userImg,
+        message,
+        index,
+        isHtml,
+        messageId = null
+      ) {
+        message = message.trim();
+        if (messageId == null) {
+          messageId = __zqChat.uuid(32, 64);
+        }
+        if (botType == 1) {
+          // 构建机器人的回答
+          $(".new-answer").removeClass("new-answer"); //永远保证类标签dropdown-item在最后一个对话
+          $(".chat-message").append2(
+            `<li class="d-flex message message-bot" id="${id}">
+                            <div class="message-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar sm rounded-circle bg-primary d-flex align-items-center justify-content-center">
+                                        <span><i class="zmdi zmdi-comment-text text-light"></i></span>
+                                    </div>
+                                    <div class="mx-10 p-2">
+                                        <a href="#" class="text-dark hover-primary font-weight-bold">${user}</a>
+                                    </div>
+                                </div>
+                                <span class="date-time text-muted">${date} <i
+                                        class="zmdi zmdi-check-all text-primary"></i></span>
+                                <div class="message-row d-flex align-items-center">
+                                    <div class="message-content p-3 text-chat" id="message-${id}" data-img="${userImg}" data-user="${user}" data-date="${date}" data-role="assistant" data-id="${messageId}"></div>
+                                    
+                                </div>
+                            </div>
+                        </li>`,
+            function () {
+              if (isHtml) {
+                $("#message-" + id).html(message);
+              } else {
+                $("#message-" + id).text(message);
+                markdownToHtml("message-" + id);
+              }
+            }
+          );
+        } else if (botType == 0) {
+          // 增加右侧的用户内容
+          $(".chat-message").append2(
+            `<li class="d-flex message message-user right" id="${id}">
+                            <div class="message-body">
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <div class="mx-10 p-2">
+                                        <a href="#" class="text-dark hover-primary font-weight-bold">${user}</a>
+                                    </div>
+                                    <span class="msg-avatar">
+                                        <img src="${userImg}" class="avatar avatar-lg rounded-circle">
+                                    </span>
+                                </div>
+                                <span class="date-time text-muted">${date}<i
+                                        class="zmdi zmdi-check-all text-primary"></i></span>
+                                <div class="message-row d-flex align-items-center justify-content-end">
+                                    
+                                    <div class="message-content p-3 text-chat" id="message-${id}" data-img="${userImg}" data-user="${user}" data-role="user" data-date="${date}" data-id="${messageId}">${message}</div>
+                                </div>
+                            </div>
+                        </li>`,
+            function () {}
+          );
+        } else {
+          $(".chat-message")
+            .append(`<li class="d-flex message message-bot" id="${id}">
+                            <div class="message-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar sm rounded-circle bg-primary d-flex align-items-center justify-content-center">
+                                        <span><i class="zmdi zmdi-comment-text text-light"></i></span>
+                                    </div>
+                                    <div class="mx-10 p-2">
+                                        <a href="#" class="text-dark hover-primary font-weight-bold">${user}</a>
+                                    </div>
+                                </div>
+                                <span class="date-time text-muted">${date} <i
+                                        class="zmdi zmdi-check-all text-primary"></i></span>
+                                <div class="message-row d-flex align-items-center">
+                                    <div class="message-content message-content-ex p-3 text-chat" data-role="helper">${message}</div>
+                                </div>
+                            </div>
+                        </li>`);
+        }
+        let scrollableDiv = document.getElementById("chat-content");
+        scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+      }
+
+  
+
+     
+
+      /**
+       * 需要帮助？
+       * */
+      function needhelp() {
+        $("#settings").click();
+        $("#faqs").click();
+      }
+
+     
+      /**
+       * 回复,支持ws跟sse，推荐使用sse
+       * */
+
+      //  import { fetchEventSource } from '@microsoft/fetch-event-source';
+      function answer(chatid, question, type) {
+        console.log("一次");
+        // 这里可以换成如果是对话，则是sse，如果是文生图这些，则可以用ws（直接返回结果）
+        if (type == "sse") {
+          // let chat = getCurrentChat();
+          let questionEncode = encodeURI(question);
+          // let eventSource = new EventSource(ip+'/stream-sse3?message=' + questionEncode + "&chatId=" + webMetaData.chatCurrentId+ "&context_number=" + chat.chat_context+ "&system=" + chat.chat_system+"&apikey="+webMetaData.apikey);
+          // MESSAGES.push({"role":"user","content":"question"})
+          // let questionEncode = encodeURI(MESSAGES);
+          let eventSource = new EventSource(
+            IP+"/chatCompletion?prompt=" + questionEncode+"&uuid="+localStorage.getItem('uuid')
+          );
+          isToMd= true
+          webMetaData.chatState = 1;buildMessage(1,"user-chat-answer-" + webMetaData.index,__zqChat.getRealDate(new Date()),"ChatBot","botimg",`
+                                        <div class="wave">
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                        </div>`,webMetaData.index,true);
+          $("#sendChat").hide();
+          $("#stopChat").show();
+          webMetaData.sse = eventSource;
+          eventSource.onopen = function (event) {};
+          eventSource.addEventListener("message", function (event) {
+            $("#message-user-chat-answer-" + webMetaData.index)
+              .find(".wave")
+              .remove();
+            let msg = event.data;
+            //错误了
+            if (msg.indexOf("500sse_error_zq") != -1) {
+              console.log("报错了");
+              webMetaData.chatState = 0;
+              // setErrorChat(msg);
+              eventSource.close();
+              $("#sendChat").show();
+              $("#stopChat").hide();
+            } else {
+      
+              // 这里可以判断sse的最后[DONE]，也可以不判断
+              let chat = JSON.parse(msg);
+              try{
+                
+              // 这里需要解析json
+                if (
+                  chat.choices[0].delta.content != undefined &&
+                  chat.choices[0].delta.content != null
+                ) {
+                  webMetaData.chatState = 2;
+                  $("#message-user-chat-answer-" + webMetaData.index).text(
+                    $("#message-user-chat-answer-" + webMetaData.index).text() +
+                      chat.choices[0].delta.content
+                  );
+                }
+                if (
+                  chat.choices[0].finishReason != undefined &&
+                  chat.choices[0].finishReason == "length"
+                ) {
+                  swal("啊呀呀!", "token超出限制", "error");
+                }
+              }catch(err){
+                isToMd = false
+                console.log(chat)
+                if(chat.type!=undefined && chat.type!=''){
+                  // 根据不同的类型判断
+                  if(chat.type=='image2text'){
+                   
+                    $("#message-user-chat-answer-" + webMetaData.index).html(
+`
+${chat.content}
+<img class="rounded mt-1" width="256" src="${chat.imageUrl}" alt="">
+`
+                    );
+                  }
+                  else if(chat.type=='image2video'){
+            
+                    $("#message-user-chat-answer-" + webMetaData.index).html(
+                        `
+图片生成视频的结果如下：
+<video width="640" height="360" controls>
+                        <source src="${chat.videoUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+
+                        `)
+                    ;
+                    
+                  }
+                  else if(chat.type=="text2image"){
+                    $("#message-user-chat-answer-" + webMetaData.index).html(
+                      `
+文生图的结果如下：
+<img class="rounded mt-1" width="256" src="${chat.imageUrl}" alt="">
+                      `
+                    )
+                  }
+                  else if(chat.type=='videoenhance'){
+                    
+                    $("#message-user-chat-answer-" + webMetaData.index).html(
+                        `
+视频增强以后的结果如下：
+<video width="640" height="360" controls>
+                        <source src="${chat.videoUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+
+                        `)
+                    ;
+                    
+                  }
+                }
+              }
+            
+             
+            }
+            if (webMetaData.cache.isscoll == "1") {
+              let scrollableDiv = document.getElementById("chat-content");
+              scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+            }
+          });
+          eventSource.addEventListener("error", function (event) {
+            console.log("信息为" + webMetaData.chat);
+            // if (webMetaData.index == 1) {
+            //     updateChat();
+            // }
+            // 将message添加到聊天记录中
+            // msg_question = $("#message-user-chat-question-"+ webMetaData.index).text();
+            msg_answer = $("#message-user-chat-answer-"+ webMetaData.index).text();
+            // MESSAGES.push({"role":"user","content":msg_question})
+            MESSAGES.push({"role":"assistant","content":msg_answer})
+            if(isToMd)
+              markdownToHtml("message-user-chat-answer-" + webMetaData.index);
+            webMetaData.index++;
+            //结束
+            webMetaData.chatState = 0;
+            eventSource.close();
+            $("#sendChat").show();
+            $("#stopChat").hide();
+            // saveChat();
+            console.log("错误");
+            //聊天错误
+            // checkChatError();
+          });
+
+
+
+        } else {
+          $.ajax({
+            type: "post",
+            url: ip + "/v1/chat/completions/poststream/" + webMetaData.userno,
+            data: JSON.stringify({
+              model: "gpt-3.5-turbo",
+              stream: true,
+              messages: [{ role: "user", content: question }],
+            }),
+            contentType: "application/json",
+            beforeSend: function () {
+              webMetaData.chatState = 1;
+              buildMessage(
+                1,
+                "user-chat-answer-" + webMetaData.index,
+                __zqChat.getRealDate(new Date()),
+                "MultiModelChatBot",
+                "botimg",
+                `<div class="wave"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`,
+                webMetaData.index,
+                true
+              );
+            },
+            success: function (response) {},
+            error: function (xhr, status, error) {
+              alert("出错了！");
+            },
+          });
+        }
+      }
+
+   
+   
+
+      /**
+       * 删除回答对话
+       * */
+      function removeAnswer(id) {
+        //
+
+        $("#" + id).remove();
+      }
+
+      let uuid = localStorage.getItem('uuid');
+      // 如果localStorage中没有UUID，则生成一个新的UUID并存储到localStorage中
+      if (!uuid) {
+          uuid = generateUUID();
+          // $.session.set("uuid",uuid)
+          localStorage.setItem('uuid', uuid);
+      }
+
+      // 生成UUID的函数
+      function generateUUID() {
+          // 生成一个随机的UUID
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+              let r = Math.random() * 16 | 0,
+                  v = c == 'x' ? r : (r & 0x3 | 0x8);
+              return v.toString(16);
+          });
+      }
+
+      function getFileTypeText(filename) {  
+        const fileExtensions = {  
+            'docx': '文档',  
+            'doc': '文档',  
+            'pdf': '文档',  
+            'txt': '文档',  
+            'jpg': '图片',  
+            'jpeg': '图片',  
+            'png': '图片',  
+            'gif': '图片',  
+            'bmp': '图片',  
+            'mp4': '视频',  
+            'avi': '视频',  
+            'mkv': '视频',  
+            'flv': '视频',  
+            'mov': '视频'  
+            // 可以继续添加其他文件类型  
+        };  
+      
+        const ext = filename.split('.').pop().toLowerCase(); // 获取文件扩展名并转为小写  
+        return fileExtensions[ext] || '未知类型'; // 返回对应的文件类型文本，如果没有匹配则返回"未知类型"  
+    }  
+  
+      // 上传文件
+      function uploadFile(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("uuid", localStorage.getItem("uuid"))
+
+        $.ajax({
+          url: IP+ "/uploadFile",
+          type: "POST",
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (response) {
+            
+            console.log("File uploaded successfully");
+            buildUploadMessage(getFileTypeText(file.name));
+           
+          },
+          error: function (error) {
+            alert("Error uploading file");
+          },
+        });
+      }
+
+      function buildUploadMessage(type){
+        $(".chat-message").append(`<li class="d-flex message message-user right" id="user-upload">
+                            <div class="message-body">
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <div class="mx-10 p-2">
+                                        <a href="#" class="text-dark hover-primary font-weight-bold">user</a>
+                                    </div>
+                                    <span class="msg-avatar">
+                                        <img src="static/img/user.png" class="avatar avatar-lg rounded-circle">
+                                    </span>
+                                </div>
+                                <span class="date-time text-muted">${getCurrentDateTime()}<i class="zmdi zmdi-check-all text-primary"></i></span>
+                                <div class="message-row d-flex align-items-center justify-content-end">
+                                    
+                                    <div class="message-content p-3 text-chat" id="message-upload"  data-user="user" data-role="user" data-date="2024-04-21 22:38:49" data-id="d8us1SBWxlJi8lvm7T0uFJElnuFfYI">你的${type}上传成功</div>
+                            </div>
+                        </li>`)
+      }
+
+      function getCurrentDateTime() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+      function getUUID() {
+        $.ajax({
+          url: IP + '/generateUUID',
+          type: 'GET',
+          contentType: 'application/json',
+          success: function(uuid) {
+            console.log('Generated UUID:', uuid);
+            sessionStorage.setItem('uuid', uuid);
+          },
+          error: function(error) {
+            console.error('Error:', error);
+          }
+        });
+      }
+ 
+
+      function createImage(prompt, n, size) {
+        $(".image-sc").html("");
+        $.ajax({
+          url: `${ip}/v1/images/generations`,
+          type: "post",
+          data: JSON.stringify({
+            prompt: prompt,
+            n: n,
+            size: size,
+          }),
+          beforeSend: function () {
+            $(".image-sc").append(`<div class="wave">
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                        </div>`);
+          },
+          contentType: "application/json",
+          success: function (data) {
+            if (data.code != undefined && data.code == 500) {
+              swal("出错了!", data.msg, "error");
+              $(".image-sc").html("");
+            } else {
+              $(".image-sc").html("");
+              let images = data.data;
+              $.each(images, function (index, image) {
+                $(".image-sc").append(
+                  `<img class="rounded mt-1" width="256" src="${image.url}" alt="">`
+                );
+              });
+            }
+          },
+          complete: function () {
+            resetImageH();
+          },
+        });
+      }
+
+      function openAndImage(prompt) {
+        $(".image-nav").click();
+        $("#image-prompt").val(prompt);
+        createImage(prompt, 1, "256x256");
+      }
+
+      function openImage() {
+        $(".image-nav").click();
+      }
+
+      function resetImageH() {}
+
+      // 增加语音功能
+      // if (navigator.mediaDevices.getUserMedia) {
+      //   const constraints = { audio: true };
+      //   navigator.mediaDevices.getUserMedia(constraints).then(
+      //     (stream) => {
+      //       console.log("授权成功！");
+      //       const recordBtn = document.querySelector(".record-btn");
+      //       const mediaRecorder = new MediaRecorder(stream);
+      //       var chunks = [];
+      //       recordBtn.onclick = () => {
+      //         recordBtn.setAttribute("data-original-title", "正在录音");
+      //         if (mediaRecorder.state === "recording") {
+      //           mediaRecorder.stop();
+      //           console.log(chunks);
+      //           mediaRecorder.onstop = (e) => {
+      //             var blob = new Blob(chunks, {
+      //               type: "audio/ogg; codecs=opus",
+      //             });
+      //             chunks = [];
+      //             var audioURL = window.URL.createObjectURL(blob);
+      //             const audioSrc = document.querySelector(".audio-player");
+      //             // audioSrc.src = audioURL;
+      //             const formData = new FormData();
+      //             formData.append("audio", blob);
+
+      //             $.ajax({
+      //               url: "http://127.0.0.1:8080/uploadVoice",
+      //               type: "POST",
+      //               data: formData,
+      //               processData: false,
+      //               contentType: false,
+      //               success: function (response) {
+      //                 console.log("音频上传成功");
+      //                 console.log(response.content);
+      //                 document.querySelector("#sendText").value=response.content;
+      //               },
+      //               error: function (error) {
+      //                 console.error("音频上传失败", error);
+      //               },
+      //             });
+
+      //             recordBtn.innerHTML = `<span class="material-icons">mic</span>`;
+      //             console.log("录音结束");
+      //             recordBtn.setAttribute("data-original-title", "开始录音");
+      //           };
+      //         } else {
+      //           mediaRecorder.start();
+      //           mediaRecorder.ondataavailable = function (e) {
+      //             chunks.push(e.data);
+      //           };
+      //           console.log(chunks);
+      //           console.log("录音中...");
+      //           recordBtn.textContent = "stop";
+      //         }
+      //         console.log("录音器状态：", mediaRecorder.state);
+      //       };
+      //     },
+      //     () => {
+      //       console.error("授权失败！");
+      //     }
+      //   );
+      // } else {
+      //   console.error("浏览器不支持 getUserMedia");
+      // }
+      
+    </script>
+  </body>
+</html>
